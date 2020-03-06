@@ -11,38 +11,37 @@
 #define H6 0x1f83d9ab
 #define H7 0x5be0cd19
 
-__device__
+__device__ __forceinline__
 uint rotr(uint x, int n) {
-  if (n < 32) return (x >> n) | (x << (32 - n));
-  return x;
+  n < 32 ? ((x >> n) | (x << (32 - n))) : x;
 }
 
-__device__
+__device__ __forceinline__
 uint ch(uint x, uint y, uint z) {
   return (x & y) ^ (~x & z);
 }
 
-__device__
+__device__ __forceinline__
 uint maj(uint x, uint y, uint z) {
   return (x & y) ^ (x & z) ^ (y & z);
 }
 
-__device__
+__device__ __forceinline__
 uint sigma0(uint x) {
   return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22);
 }
 
-__device__
+__device__ __forceinline__
 uint sigma1(uint x) {
   return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25);
 }
 
-__device__
+__device__ __forceinline__
 uint gamma0(uint x) {
   return rotr(x, 7) ^ rotr(x, 18) ^ (x >> 3);
 }
 
-__device__
+__device__ __forceinline__
 uint gamma1(uint x) {
   return rotr(x, 17) ^ rotr(x, 19) ^ (x >> 10);
 }
@@ -58,7 +57,7 @@ __constant__ uint K[64]={
   0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-__device__
+__device__ __forceinline__
 uint get_global_id() {
   uint blockId, threadsPerBlock;
   blockId = blockIdx.z * gridDim.x * gridDim.y
@@ -80,6 +79,7 @@ __global__ void sha256_crypt_kernel(ulong start, uint *prefix, ulong plen, uint 
   //}
 
   // brutforce is build up as: prefix | thr_id:04x | <rnd>:04x | start:08x
+#pragma unroll
   for (t = 0; t < plen; ++t) {
     Ws[t] = prefix[t];
   //  printf("%04x", prefix[t]);
@@ -91,6 +91,8 @@ __global__ void sha256_crypt_kernel(ulong start, uint *prefix, ulong plen, uint 
   T2 = (T1 & 0xe0e0e0e);
   T2 = ((((T2 >> 1) & T2) >> 2) | (((T2 >> 2) & T2) >> 1)) & 0x1010101;
   Ws[plen] = T1 + 0x30303030 + T2 * 0x27;
+
+  
 
   T1 = (uint)(start >> 32);
   T1 = (T1 & 0xf) | (((T1 >> 4) & 0xf) << 8) | (((T1 >> 8) & 0xf) << 16) | (((T1 >> 12) & 0xf) << 24);
@@ -106,6 +108,7 @@ __global__ void sha256_crypt_kernel(ulong start, uint *prefix, ulong plen, uint 
 
   Ws[plen + 4] = 0x80000000;
 
+#pragma unroll
   for (t = plen + 5; t < 15; ++t) {
     Ws[t] = 0;
   }
