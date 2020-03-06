@@ -52,8 +52,8 @@ def solve_pow(prefix, bits):
     res = prefix + f"{res[1]:04x}{res[2]:04x}{rnd:08x}".encode()
     return res
     t = time.time() - t
+    print("Time required is " + t)
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
         print(solve_pow(sys.argv[1].encode(), int(sys.argv[2])).decode())
-        print("TIme required is " + t)
