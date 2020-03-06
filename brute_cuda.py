@@ -10,6 +10,7 @@ import base64
 import sys
 import os
 from IPython import embed
+import time
 
 def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -37,6 +38,7 @@ def solve_pow(prefix, bits):
     
     mask = (0xffffffff << (32 - bits)) & 0xffffffff
 
+    t = time.time()
     # draufficken
     rnd = 0
     while True:
@@ -49,7 +51,9 @@ def solve_pow(prefix, bits):
     # print(rnd)
     res = prefix + f"{res[1]:04x}{res[2]:04x}{rnd:08x}".encode()
     return res
+    t = time.time() - t
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
         print(solve_pow(sys.argv[1].encode(), int(sys.argv[2])).decode())
+        print("TIme required is " + t)

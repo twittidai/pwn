@@ -13,7 +13,7 @@
 
 __device__ __forceinline__
 uint rotr(uint x, int n) {
-  n < 32 ? ((x >> n) | (x << (32 - n))) : x;
+  n < 32 ? x = ((x >> n) | (x << (32 - n))) : x;
   return x;
 }
 
