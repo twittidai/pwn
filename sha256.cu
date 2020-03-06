@@ -13,7 +13,7 @@
 
 __device__ __forceinline__
 uint rotr(uint x, int n) {
-  n < 32 ? ((x >> n) | (x << (32 - n))) : x;
+  n < 32 ? return ((x >> n) | (x << (32 - n))) : return x;
 }
 
 __device__ __forceinline__
@@ -92,7 +92,7 @@ __global__ void sha256_crypt_kernel(ulong start, uint *prefix, ulong plen, uint 
   T2 = ((((T2 >> 1) & T2) >> 2) | (((T2 >> 2) & T2) >> 1)) & 0x1010101;
   Ws[plen] = T1 + 0x30303030 + T2 * 0x27;
 
-  
+
 
   T1 = (uint)(start >> 32);
   T1 = (T1 & 0xf) | (((T1 >> 4) & 0xf) << 8) | (((T1 >> 8) & 0xf) << 16) | (((T1 >> 12) & 0xf) << 24);
