@@ -44,10 +44,10 @@ def solve_pow(prefix, bits):
     griddimx = 32*80
     blockdimx = 64
     while True:
-        fun(np.uint64(rnd), cuda.In(pref), np.uint64(pref.shape[0]), np.uint32(mask), cuda.InOut(res), block=(blockdimx,1,1), grid=(griddimx*80,1,1))
+        fun(np.uint64(rnd), cuda.In(pref), np.uint64(pref.shape[0]), np.uint32(mask), cuda.InOut(res), block=(blockdimx,1,1), grid=(griddimx,1,1))
         if res[0] != 0:
             break
-        rnd += griddimx * blockdimx
+        rnd += 1
 
     # print(res_np)
     # print(rnd)
